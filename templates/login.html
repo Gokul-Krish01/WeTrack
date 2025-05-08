@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Login</h2>
+<form method="post">
+    <div class="form-group">
+        <label for="username">Select User:</label>
+        <select class="form-control" name="username" id="username">
+            <option>Krish</option>
+            <option>Shamy</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+    {% if error %}
+        <div class="alert alert-danger mt-2">{{ error }}</div>
+    {% endif %}
+</form>
+{% endblock %}
+

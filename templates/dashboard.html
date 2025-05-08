@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+
+    <!-- Welcome Header -->
+    <h2 class="greeting text-center mb-4">👋 Welcome, {{ user }}</h2>
+
+    <!-- Today's Summary Section -->
+    <div class="card mb-5 p-4">
+        <h4 class="section-subtitle">📅 Today's Summary</h4>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5>Productivity Today</h5>
+                <canvas id="todaySummaryChart" width="400" height="200"></canvas>
+            </div>
+            <div class="mt-4 mt-md-0">
+                <h5>Total Hours Today</h5>
+                <ul class="summary-list">
+                    {% for member, hours in summary %}
+                        <li><strong>{{ member }}:</strong> {{ hours }} hours</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <div class="mt-5">
+        <h5>📅 Filter Data by Date</h5>
+        <form method="POST" action="/dashboard">
+            <div class="input-group mb-4">
+                <input type="date" class="form-control" name="start_date" placeholder="Start Date" required>
+                <input type="date" class="form-control" name="end_date" placeholder="End Date" required> <br>
+                <button class="btn btn-primary">Apply Filter</button>
+            </div>
+        </form>
+    </div>
+    <!-- Comparison Chart Section -->
+    <div class="card p-4">
+        <h3 class="section-title text-center mb-4">📊 Productivity Comparison</h3>
+
+        <div class="mt-4">
+            <h5>🔍 Weekly/Overall Totals</h5>
+            <ul class="list-group">
+                {% for member, total in totals %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ member }}
+                        <span class="badge badge-primary badge-pill font-weight-bold">{{ total }} hrs</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Weekly Progress Chart -->
+        <div class="mt-4">
+            <h5>📅 Weekly Progress</h5>
+            <canvas id="weeklyProgressChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Optional Filter Section -->
+   
+
+</div>
+
+<!-- Add Chart.js for Graphs -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Today's Summary Chart (Pie Chart for each member's hours)
+    var ctx1 = document.getElementById('todaySummaryChart').getContext('2d');
+    var todaySummaryChart = new Chart(ctx1, {
+        type: 'pie',
+        data: {
+            labels: {{ summary | map(attribute=0) | list | tojson }},
+            datasets: [{
+                label: 'Hours Today',
+                data: {{ summary | map(attribute=1) | list | tojson }},
+                backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': ' + tooltipItem.raw + ' hrs';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Weekly Progress Chart (Bar Chart for each user's weekly total)
+    var ctx2 = document.getElementById('weeklyProgressChart').getContext('2d');
+    var weeklyProgressChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: {{ totals | map(attribute=0) | list | tojson }},
+            datasets: [{
+                label: 'Weekly Total Hours',
+                data: {{ totals | map(attribute=1) | list | tojson }},
+                backgroundColor: '#36A2EB',
+                borderColor: '#36A2EB',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': ' + tooltipItem.raw + ' hrs';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

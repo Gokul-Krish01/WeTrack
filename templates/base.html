@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WeTrack Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Bootstrap + Custom Fonts -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark main-navbar">
+        <a class="navbar-brand" href="#">🎓 WeTrack Pro</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if session['user'] %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('log') }}">Add-Data</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('ai') }}">AI Assistant</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('export') }}">Export</a></li>
+                    <li class="nav-item"><a class="nav-link logout-btn" href="{{ url_for('logout') }}">Logout</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Container -->
+    <div class="container main-content mt-5">
+        {% block content %}{% endblock %}
+    </div>
+
+
+    <footer class="footer mt-auto py-3 text-center">
+        <p>&copy; 2025 WeTrack Pro | Made with ❤️ by Gokul</p>
+    </footer>
+</body>
+</html>
